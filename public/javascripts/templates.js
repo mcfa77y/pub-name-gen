@@ -19,7 +19,8 @@ templates['pub_name'] = template({"1":function(depth0,helpers,partials,data) {
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.swap : depth0),{"name":"if","hash":{},"fn":this.program(1, data, 0),"inverse":this.program(3, data, 0),"data":data})) != null ? stack1 : "");
+  return "\n"
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.swap : depth0),{"name":"if","hash":{},"fn":this.program(1, data, 0),"inverse":this.program(3, data, 0),"data":data})) != null ? stack1 : "");
 },"useData":true});
 templates['table'] = template({"1":function(depth0,helpers,partials,data,blockParams,depths) {
     var stack1, helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;

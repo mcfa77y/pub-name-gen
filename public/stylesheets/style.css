@@ -26,6 +26,10 @@ a {
     height: 150px;
 }
 
-#slide {
-    margin-top: 1em;
+.logoCountSlider {
+    margin-top: 0.7em;
+}
+
+.row {
+    margin-bottom: 0.5em;
 }

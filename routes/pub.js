@@ -15,14 +15,7 @@ var nounProject = new NounProject({
 /* pub page */
 router.get('/', function(req, res) {
     var colors = generateColorPalette();
-    res.render('pub', {
-        helpers: {
-            randomColor: function() {
-                return "#" + colors[Utils.randomInt(0, colors.length)];
-            }
-
-        }
-    });
+    res.render('pub', {});
 });
 
 router.get('/getLogo', function(req, res) {

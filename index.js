@@ -68,9 +68,9 @@ function exposeTemplates(req, res, next) {
 
 
 
-app.use('/', routes);
+app.use('/', pub);
 app.use('/users', users);
-app.use('/pub', pub);
+// app.use('/pub', pub);
 
 
 // catch 404 and forward to error handler
@@ -92,6 +92,14 @@ if (app.get('env') === 'development') {
             error: err
         });
     });
+
+    // hbsPrecompiler = require('handlebars-precompiler');
+// hbsPrecompiler.watch(
+//     __dirname + "/shared/templates",
+//     __dirname + "/public/javascripts/templates.js", {
+//         extensions: ['handlebars', 'hbs'],
+//         min: false
+//     });
 }
 
 // production error handler
@@ -104,7 +112,7 @@ app.use(function(err, req, res, next) {
     });
 });
 Handlebars.getPartials().then(function(partials) {
-    console.log(partials);
+    // console.log(partials);
     // => { 'foo/bar': [Function],
     // =>    title: [Function] }
 });
@@ -112,7 +120,8 @@ Handlebars.getPartials().then(function(partials) {
 app.set('port', (process.env.PORT || 5000));
 
 app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
+    // console.log('Node app is running on port', app.get('port'));
 });
+
 
 module.exports = app;

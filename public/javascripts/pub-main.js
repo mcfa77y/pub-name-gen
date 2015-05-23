@@ -24,6 +24,8 @@ $(function() {
     $('#tryAgain').click(function() {
         getPage();
     });
+
+    $('[data-toggle="tooltip"]').tooltip()
 });
 
 $('#swap').click(function() {
@@ -41,7 +43,7 @@ $('.image-wrap').click(function() {
 function getPage(options) {
     options || (options = {});
     var val = $("#amount").val();
-    var url = 'pub/getLogo?count=' + val;
+    var url = 'getLogo?count=' + val;
 
     if (options.noun1) {
         url += '&noun1=' + options.noun1;
