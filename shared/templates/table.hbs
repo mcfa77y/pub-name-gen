@@ -1,8 +1,8 @@
-{{#if swap}}
 <table class='table table-striped'>
     <thead>
         <th>{{noun1}}</th>
         <th>{{noun2}}</th>
+        <th>Add to favorites</th>
     </thead>
     <tbody>
         {{#each icons1}}
@@ -15,33 +15,12 @@
                 <span class='image-wrap' style='background:url({{getIt ../icons2 @index "preview_url_84"}}) no-repeat center center; background-color: {{randomColor ../colors}}'>
              </span>
             </td>
-        </tr>
-        {{/each}}
-    </tbody>
-</table>
-{{else}}
-<table class='table table-striped'>
-    <thead>
-        <th>{{noun2}}</th>
-        <th>{{noun1}}</th>
-    </thead>
-    <tbody>
-        {{#each icons1}}
-        <tr>
-            <td class='card'>
-                <button data-toggle="modal" data-target="#myModal">
-                    <span class='image-wrap' style='background:url({{getIt ../icons2 @index "preview_url_84"}}) no-repeat center center; background-color: {{randomColor ../colors @index}}'>
-                    </span>
-                </button>
-            </td>
-            <td class='circle'>
-                <button data-toggle="modal" data-target="#myModal">
-                    <span class='image-wrap' style='background:url({{preview_url_84}}) no-repeat center center;  background-color: {{randomColor ../colors @index}}'>
-                </span>
+            <td>
+                <button type="button" class="btn btn-default addToFavorite" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 </button>
             </td>
         </tr>
         {{/each}}
     </tbody>
 </table>
-{{/if}}

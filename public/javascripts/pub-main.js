@@ -1,7 +1,7 @@
 $(function() {
 
     var logoData;
-    var initCountValue = 1;
+    var initCountValue = 2;
     $("#amount").val(initCountValue);
     $("#slider").slider({
         value: initCountValue,
@@ -25,12 +25,18 @@ $(function() {
         getPage();
     });
 
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-toggle="tooltip"]').tooltip();
+
+    initAddToFavorite();
 });
 
 $('#swap').click(function() {
-    logoData.swap = !logoData.swap;
-    console.log('swap', logoData.swap);
+    var swapLogoData = {};
+    swapLogoData.noun1 = logoData.noun2;
+    swapLogoData.noun2 = logoData.noun1;
+    swapLogoData.icons1 = logoData.icons2;
+    swapLogoData.icons2 = logoData.icons1;
+    $.extend(logoData, swapLogoData);
     renderPageWithData(logoData);
 });
 
@@ -40,11 +46,18 @@ $('.image-wrap').click(function() {
     });
 });
 
+function initAddToFavorite() {
+    $('.addToFavorite').click(function() {
+        console.log('hello' + this);
+        $('span', $(this)).toggleClass("glyphicon glyphicon-plus glyphicon glyphicon-minus");
+    });
+}
+
 function getPage(options) {
     options || (options = {});
     var val = $("#amount").val();
     var url = 'getLogo?count=' + val;
-
+    var data = {};
     if (options.noun1) {
         url += '&noun1=' + options.noun1;
     }
@@ -52,15 +65,17 @@ function getPage(options) {
         url += '&noun2=' + options.noun2;
     }
 
-    $.get(url, {}, function(data) {
-        logoData = data;
-        renderPageWithData(data);
+    $.get(url, data, function(response_data) {
+        logoData = response_data;
+        renderPageWithData(response_data);
     });
 }
 
 function renderPageWithData(data) {
     $("#pub_name").html(Handlebars.templates.pub_name(data));
     $("#logoTable").html(Handlebars.templates.table(data));
+    initAddToFavorite();
+
 }
 
 
