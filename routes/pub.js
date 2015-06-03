@@ -14,8 +14,22 @@ var nounProject = new NounProject({
 
 /* pub page */
 router.get('/', function(req, res) {
-    var colors = generateColorPalette();
-    res.render('pub', {});
+    res.render('pub', {
+        user: req.user
+    });
+});
+
+router.get('/generate', function(req, res) {
+    res.render('pub', {
+        user: req.user
+    });
+});
+
+
+router.get('/favorites', Utils.ensureAuthenticated, function(req, res) {
+    res.render('favorites', {
+        user: req.user
+    });
 });
 
 router.get('/getLogo', function(req, res) {
@@ -24,6 +38,7 @@ router.get('/getLogo', function(req, res) {
     var noun1 = nounGen.choose().toProperCase();
     var noun2 = nounGen.choose().toProperCase();
     var iconCount = ICONS_COUNT;
+    var user = req.user;
     if (req.query.count) {
         iconCount = req.query.count;
     }
@@ -58,7 +73,7 @@ router.get('/getLogo', function(req, res) {
                         icons1: data1.icons,
                         icons2: data2.icons,
                         colors: colors,
-                        swap: false
+                        user: user
                     });
                 }
             });
@@ -70,7 +85,6 @@ router.get('/getLogo', function(req, res) {
 
 function generateColorPalette() {
     var ColorScheme = require('color-scheme');
-    var Utils = require('../lib/utils');
 
     var scheme = new ColorScheme();
     var randomHue = Utils.randomInt(0, 360);

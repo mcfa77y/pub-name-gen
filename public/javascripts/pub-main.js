@@ -56,7 +56,7 @@ function initAddToFavorite() {
 function getPage(options) {
     options || (options = {});
     var val = $("#amount").val();
-    var url = 'getLogo?count=' + val;
+    var url = '/getLogo?count=' + val;
     var data = {};
     if (options.noun1) {
         url += '&noun1=' + options.noun1;

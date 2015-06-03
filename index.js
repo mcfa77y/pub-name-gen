@@ -6,11 +6,63 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var passport = require('passport');
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var session = require('express-session');
+var mongoose = require('mongoose');
+var compression = require('compression')
+
+// API Access link for creating client ID and secret:
+// https://code.google.com/apis/console/
+var GOOGLE_CLIENT_ID = "473120167515-ln8esth9olnuljlr4g0tf0gcuadgr56a.apps.googleusercontent.com";
+var GOOGLE_CLIENT_SECRET = "d8uUYyZSQbWyAh0rC-7hGGSJ";
+
+var Utils = require('./lib/utils');
+
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var pub = require('./routes/pub');
 
+
+// Passport session setup.
+//   To support persistent login sessions, Passport needs to be able to
+//   serialize users into and deserialize users out of the session.  Typically,
+//   this will be as simple as storing the user ID when serializing, and finding
+//   the user by ID when deserializing.  However, since this example does not
+//   have a database of user records, the complete Google profile is
+//   serialized and deserialized.
+passport.serializeUser(function(user, done) {
+    done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+    done(null, obj);
+});
+
+
+// Use the GoogleStrategy within Passport.
+//   Strategies in Passport require a `verify` function, which accept
+//   credentials (in this case, an accessToken, refreshToken, and Google
+//   profile), and invoke a callback with a user object.
+// https://pub-name-gen.herokuapp.com/oauth2callback
+passport.use(new GoogleStrategy({
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://127.0.0.1:5000/auth/google/callback"
+},
+function(accessToken, refreshToken, profile, done) {
+        // asynchronous verification, for effect...
+        process.nextTick(function() {
+
+            // To keep the example simple, the user's Google profile is returned to
+            // represent the logged-in user.  In a typical application, you would want
+            // to associate the Google account with a user record in your database,
+            // and return that user instead.
+            return done(null, profile);
+        });
+    }
+    ));
 
 var app = express();
 
@@ -33,6 +85,21 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: true
+    }
+}));
+// Initialize Passport!  Also use passport.session() middleware, to support
+// persistent login sessions (recommended).
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 // Middleware to expose the app's shared templates to the cliet-side of the app
 // for pages which need them.
@@ -65,12 +132,62 @@ function exposeTemplates(req, res, next) {
     .catch(next);
 }
 
-
-
+// must be set before routes
+app.use(compression())
 
 app.use('/', pub);
 app.use('/users', users);
 // app.use('/pub', pub);
+
+
+app.get('/account', Utils.ensureAuthenticated, function(req, res) {
+    res.render('account', {
+        user: req.user
+    });
+});
+
+app.get('/login', function(req, res) {
+    res.render('login', {
+        user: req.user
+    });
+});
+
+// GET /auth/google
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  The first step in Google authentication will involve
+//   redirecting the user to google.com.  After authorization, Google
+//   will redirect the user back to this application at /auth/google/callback
+app.get('/auth/google',
+    passport.authenticate('google', {
+        scope: ['https://www.googleapis.com/auth/plus.login']
+    }),
+    function(req, res) {
+        // The request will be redirected to Google for authentication, so this
+        // function will not be called.
+    });
+
+// GET /auth/google/callback
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  If authentication fails, the user will be redirected back to the
+//   login page.  Otherwise, the primary route function function will be called,
+//   which, in this example, will redirect the user to the home page.
+app.get('/auth/google/callback',
+    passport.authenticate('google', {
+        failureRedirect: '/login'
+    }),
+    function(req, res, next) {
+        console.log('logged in: ' + next);
+        // res.redirect('/');
+        res.render('pub', {
+            user: req.user
+        });
+    });
+
+app.get('/logout', function(req, res) {
+    req.logout();
+    res.redirect('/');
+});
+
 
 
 // catch 404 and forward to error handler
@@ -94,12 +211,12 @@ if (app.get('env') === 'development') {
     });
 
     // hbsPrecompiler = require('handlebars-precompiler');
-// hbsPrecompiler.watch(
-//     __dirname + "/shared/templates",
-//     __dirname + "/public/javascripts/templates.js", {
-//         extensions: ['handlebars', 'hbs'],
-//         min: false
-//     });
+    // hbsPrecompiler.watch(
+    //     __dirname + "/shared/templates",
+    //     __dirname + "/public/javascripts/templates.js", {
+    //         extensions: ['handlebars', 'hbs'],
+    //         min: false
+    //     });
 }
 
 // production error handler
@@ -111,6 +228,7 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
+
 Handlebars.getPartials().then(function(partials) {
     // console.log(partials);
     // => { 'foo/bar': [Function],

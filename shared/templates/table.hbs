@@ -2,24 +2,28 @@
     <thead>
         <th>{{noun1}}</th>
         <th>{{noun2}}</th>
+        {{#if ../user}}
         <th>Add to favorites</th>
+        {{/if}}
     </thead>
     <tbody>
         {{#each icons1}}
         <tr>
             <td class='card'>
-                <span class='image-wrap' style='background:url({{preview_url_84}}) no-repeat center center;  background-color: {{randomColor ../colors}}'>
+                <span class='image-wrap' style='background:url({{preview_url_84}}) no-repeat center center; background-color: {{randomColor ../colors}}'>
              </span>
             </td>
             <td class='circle'>
                 <span class='image-wrap' style='background:url({{getIt ../icons2 @index "preview_url_84"}}) no-repeat center center; background-color: {{randomColor ../colors}}'>
              </span>
             </td>
+            {{#if ../user}}
             <td>
                 <button type="button" class="btn btn-default addToFavorite" aria-label="Left Align">
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 </button>
             </td>
+            {{/if}}
         </tr>
         {{/each}}
     </tbody>
