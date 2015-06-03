@@ -133,7 +133,7 @@ function exposeTemplates(req, res, next) {
 }
 
 // must be set before routes
-app.use(compression())
+app.use(compression());
 
 app.use('/', pub);
 app.use('/users', users);
